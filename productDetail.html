@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Information</title>
+    <style>
+      /* Style adjustments for product page */
+     
+  /* Base body styling for consistent appearance */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding-top: 70px;
+    background-color: #f5f5f5;
+  }
+
+  /* Main container with responsive width */
+  .container {
+    max-width: 95%;
+    margin: auto;
+    padding: 15px;
+  }
+
+  /* Navbar styling */
+  .navbar {
+    background-color: #212529;
+    padding: 1rem 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+  }
+  /* Search results container styling */
+  .search-results {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    z-index: 10;
+  }
+
+  /* Individual search result item styling */
+  .search-results div {
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+  }
+
+  .search-results div:last-child {
+    border-bottom: none;
+  }
+
+  /* Hover effect for search result items */
+  .search-results div:hover {
+    background-color: #f0f0f0;
+  }
+
+  /* Navbar search bar with flexible size */
+  .search-bar {
+    width: 50%;
+    position: relative;
+    transition: width 0.3s ease;
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 2px;
+    border: 1px solid #ccc;
+  }
+
+  .search-bar button {
+    background-color: #ffeb3b;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .search-bar button:hover {
+    background-color: #f0a500;
+  }
+
+  /* Navbar buttons for seller and cart */
+  .navbar .seller-btn,
+  .navbar .cart-btn {
+    color: white;
+    font-weight: bold;
+    margin-left: 20px;
+    cursor: pointer;
+  }
+
+  .cart-btn {
+    display: flex;
+    align-items: center;
+  }
+
+  .cart-btn i {
+    margin-right: 5px;
+  }
+
+  .cart-btn:hover {
+    color: #ffeb3b;
+    background-color: #2874f0;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+
+  /* Product main image styling */
+  .main-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+
+  /* Related images container with horizontal scrolling */
+  .related-images {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+
+  .related-image {
+    width: 80px;
+    height: auto;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  /* Price, offer, and delivery styling */
+  .price {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #000;
+    margin-top: 15px;
+  }
+
+  .offer {
+    color: green;
+    font-weight: bold;
+  }
+
+  .delivery,
+  .code {
+    margin-top: 5px;
+    font-weight: bold;
+  }
+
+  /* Size options styling */
+  .sizes {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .size-option {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  /* Fixed buy button at the bottom */
+  .buy-button {
+    position: fixed;
+    bottom: 10px;
+    width: calc(100% - 40px);
+    left: 20px;
+    background-color: #ff6600;
+    color: white;
+    font-size: 1.2em;
+    padding: 15px 0;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  /* Stock alert styling */
+  .stock-alert {
+    color: violet;
+    font-size: 14px;
+    background-color: #e6e6fa;
+    padding: 5px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-top: 10px;
+  }
+
+  /* Responsive adjustments for screens 600px or smaller */
+  @media (max-width: 600px) {
+    .navbar {
+      flex-direction: column;
+      align-items: start;
+      padding: 0.8rem;
+    }
+
+    .search-bar {
+      width: 90%;
+      margin-top: 5px;
+    }
+
+    .main-image {
+      width: 100%;
+      height: auto;
+    }
+
+    .related-image {
+      width: 60px;
+      height: auto;
+    }
+
+    .buy-button {
+      width: calc(100% - 10px);
+      font-size: 1em;
+    }
+
+    .sizes .size-option {
+      font-size: 0.9em;
+      padding: 4px 8px;
+    }
+  }
+
+  /* Additional styles for the active size option */
+  .size-option.active {
+    background-color: #ff6600; /* Change this color as desired */
+    color: white; /* Change text color for contrast */
+    border: 1px solid #ccc; /* Optional: to match the design */
+  }
+
+
+</style>
+
+    </style>
+  </head>
+  <body>
+    <nav
+      class="navbar d-flex align-items-center justify-content-between fixed-top"
+    >
+      <!-- Search Bar -->
+      <div class="search-bar flex-grow-1" id="searchBarContainer">
+        <form class="d-flex" role="search" onsubmit="return false;">
+          <input
+            class="form-control me-2"
+            type="search"
+            placeholder="Search for Products, Brands and More"
+            aria-label="Search"
+            onfocus="expandSearchBar()"
+            onblur="shrinkSearchBar()"
+            oninput="showResults(this.value)"
+          />
+        </form>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+
+      <!-- Cart Button with improved spacing and hover effect -->
+    </nav>
+
+    <div class="container" style="margin-top: 10px;">
+      <h2 id="productName"></h2>
+      <img src="" alt="Main Product Image" class="main-image" id="mainImage" />
+
+      <div class="code">Look</div>
+      <div class="related-images" id="relatedImagesContainer"></div>
+
+      <p class="price" id="productPrice"></p>
+      <p class="offer" id="productOffer"></p>
+      <p class="delivery" id="deliveryDate"></p>
+      <p class="code" id="code"></p>
+      <span class="stock-alert">Only a few left in stock!</span>
+      <div class="code">
+        Available Size
+      </div>
+
+
+      <div style="margin-bottom: 100px" class="sizes">
+        <div class="size-option"  onclick="selectSize('S')">S</div>
+        <div class="size-option" onclick="selectSize('M')">M</div>
+        <div class="size-option" onclick="selectSize('L')">L</div>
+        <div class="size-option" onclick="selectSize('XL')">XL</div>
+        <div class="size-option" onclick="selectSize('XXL')">XXL</div>
+        <div class="size-option" onclick="selectSize('XXXL')">XXXL</div>
+      </div>
+    </div>
+
+    <div class="buy-button" onclick="redirectToOrderDetails()">BUY</div>
+
+    <script>
+      // Load main product details from session storage
+      document.getElementById("productName").textContent =
+        sessionStorage.getItem("productName") || "Product Name";
+      document.getElementById("productPrice").textContent =
+        sessionStorage.getItem("productPrice") || "$0.00";
+      document.getElementById("mainImage").src =
+        sessionStorage.getItem("mainImage") ||
+        "https://via.placeholder.com/600";
+      document.getElementById("productOffer").textContent =
+        sessionStorage.getItem("offer") || "No Offers Available";
+      document.getElementById("deliveryDate").textContent =
+        sessionStorage.getItem("deliveryDate") ||
+        "No Delivery Information Available";
+      document.getElementById("code").textContent =
+        sessionStorage.getItem("code") || "No Code";
+
+      // Load related images from session storage
+      const relatedImagesContainer = document.getElementById(
+        "relatedImagesContainer"
+      );
+      const relatedImages = JSON.parse(
+        sessionStorage.getItem("relatedImages") || "[]"
+      );
+
+      relatedImages.forEach((src) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.className = "related-image";
+        img.alt = "Related Product Image";
+        img.addEventListener("click", () => {
+          document.getElementById("mainImage").src = src;
+        });
+        relatedImagesContainer.appendChild(img);
+      });
+
+      // Functions to expand/shrink the search bar
+      function expandSearchBar() {
+        document.querySelector(".search-bar").classList.add("expanded");
+      }
+
+      function shrinkSearchBar() {
+        document.querySelector(".search-bar").classList.remove("expanded");
+      }
+
+      // Search Results Functionality
+      function showResults(searchQuery) {
+        const searchResults = document.getElementById("searchResults");
+        if (searchQuery.length === 0) {
+          searchResults.style.display = "none";
+          return;
+        }
+
+        const results = [
+          "Men's T-Shirt",
+          "Men's Jeans",
+          "Men's Jacket",
+          "Men's Shoes",
+          "Men's Suit",
+          "Men's Shorts",
+          "Men's Hoodie",
+          "Men's Belt",
+          "Men's Socks",
+          "Men's Sunglasses",
+        ];
+
+        const filteredResults = results.filter((item) =>
+          item.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        searchResults.innerHTML = filteredResults
+          .map((result) => `<div>${result}</div>`)
+          .join("");
+
+        searchResults.style.display = "block";
+
+        searchResults.querySelectorAll("div").forEach((div) =>
+          div.addEventListener("click", () => {
+            window.location.href =
+              "search-results.html?query=" + div.textContent;
+          })
+        );
+      }
+   
+
+      function selectSize(size) {
+  // Store the selected size in sessionStorage
+  sessionStorage.setItem("selectedSize", size);
+
+  // Remove 'active' class from all size options
+  const sizeOptions = document.querySelectorAll('.size-option');
+  sizeOptions.forEach(option => {
+    option.classList.remove('active');
+  });
+
+  // Add 'active' class to the currently selected size option
+  const selectedOption = Array.from(sizeOptions).find(option => option.textContent === size);
+  if (selectedOption) {
+    selectedOption.classList.add('active');
+  }
+}
+
+
+  // BUY button redirection with data transfer
+  document.querySelector(".buy-button").addEventListener("click", () => {
+    sessionStorage.setItem("productName", document.getElementById("productName").textContent);
+    sessionStorage.setItem("productPrice", document.getElementById("productPrice").textContent);
+    sessionStorage.setItem("productOffer", document.getElementById("productOffer").textContent);
+    sessionStorage.setItem("code", document.getElementById("code").textContent);
+
+    window.location.href = 'order-details.html';
+  });
+    </script>
+  </body>
+</html>
